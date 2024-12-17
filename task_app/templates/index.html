@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メモ一覧</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</head>
+<body>
+    <h2>メモ一覧</h2>
+
+    <!-- 検索フォーム -->
+    <form method="GET" action="{{ url_for('index') }}">
+        <label for="search">検索:</label>
+        <input type="text" name="search" value="{{ request.args.get('search', '') }}">
+        
+        <label for="category">カテゴリ:</label>
+        <select name="category">
+            <option value="">すべて</option>
+            <option value="仕事" {% if request.args.get('category') == '仕事' %}selected{% endif %}>仕事</option>
+            <option value="趣味" {% if request.args.get('category') == '趣味' %}selected{% endif %}>趣味</option>
+            <option value="重要" {% if request.args.get('category') == '重要' %}selected{% endif %}>重要</option>
+            <option value="その他" {% if request.args.get('category') == 'その他' %}selected{% endif %}>その他</option>
+        </select>
+        
+        <button type="submit">検索</button>
+    </form>
+    
+    <ul>
+        {% for note in notes %}
+            <li>
+                <strong>{{ note['title'] }}</strong><br>
+                カテゴリ: {{ note['category'] }}<br>
+                作成日: {{ note['created_date'] }}<br>
+                <a href="#" onclick="openEditPopup({{ note['id'] }}, '{{ note['title'] }}', '{{ note['content'] }}', '{{ note['category'] }}')">編集</a> |
+                <a href="{{ url_for('delete_note', id=note['id']) }}">削除</a>
+            </li>
+        {% else %}
+            <li>メモはありません。</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('create_note') }}">新しいメモを作成</a><br>
+    <a href="{{ url_for('logout') }}">ログアウト</a>
+
+    <!-- 編集用のポップアップ -->
+    <div id="editPopup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closeEditPopup()">×</span>
+            <h3>メモ編集</h3>
+            <form id="editForm" method="POST">
+                <label for="title">タイトル:</label>
+                <input type="text" id="editTitle" name="title" required><br><br>
+
+                <label for="content">内容:</label>
+                <textarea id="editContent" name="content" required></textarea><br><br>
+
+                <label for="category">カテゴリ:</label>
+                <select id="editCategory" name="category">
+                    <option value="仕事">仕事</option>
+                    <option value="趣味">趣味</option>
+                    <option value="重要">重要</option>
+                    <option value="その他">その他</option>
+                </select><br><br>
+
+                <input type="hidden" id="editNoteId" name="id">
+                <button type="submit">更新</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

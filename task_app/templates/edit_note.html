@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>メモ編集</title>
+</head>
+<body>
+    <h2>メモ編集</h2>
+    <form method="POST">
+        <label for="title">タイトル:</label>
+        <input type="text" name="title" value="{{ note.title }}" required><br><br>
+        <label for="content">内容:</label>
+        <textarea name="content" required>{{ note.content }}</textarea><br><br>
+        <button type="submit">更新</button>
+    </form>
+    <br>
+    <a href="{{ url_for('index') }}">メインページに戻る</a>
+</body>
+</html>
